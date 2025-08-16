@@ -19,7 +19,8 @@ MONGO_DB_URI = getenv("MONGO_DB_URI", "mongodb+srv://ryumasgod:ryumasgod@cluster
 DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 60))
 
 # Chat id of a group for logging bot's activities
-LOG_GROUP_ID=-1002800777153
+LOG_GROUP_ID = int(getenv("LOG_GROUP_ID", "-1002800777153"))
+
 
 
 # Get this value from @MissRose_Bot on Telegram by /id
@@ -122,6 +123,7 @@ if SUPPORT_GROUP:
         raise SystemExit(
             "[ERROR] - Your SUPPORT_GROUP url is wrong. Please ensure that it starts with https://"
         )
+
 
 
 
