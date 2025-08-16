@@ -3,8 +3,8 @@ if sys.platform != "win32":
     import uvloop
     uvloop.install()
 
-from pyrogram import Client
-from pyrogram.enums import ParseMode
+from pyrogram import Client, errors
+from pyrogram.enums import ChatMemberStatus, ParseMode
 
 import config
 from ..logging import LOGGER
@@ -30,10 +30,29 @@ class Aviax(Client):
         self.username = self.me.username
         self.mention = self.me.mention
 
-        LOGGER(__name__).info(
-            f"Music Bot Started as {self.name} (@{self.username}) | ID: {self.id}"
-        )
+        try:
+            await self.send_message(
+                chat_id=config.LOG_GROUP_ID,
+                text=f"<u><b>» {self.mention} ʙᴏᴛ sᴛᴀʀᴛᴇᴅ :</b><u>\n\nɪᴅ : <code>{self.id}</code>\nɴᴀᴍᴇ : {self.name}\nᴜsᴇʀɴᴀᴍᴇ : @{self.username}",
+            )
+        except (errors.ChannelInvalid, errors.PeerIdInvalid):
+            LOGGER(__name__).error(
+                "Bot has failed to access the log group/channel. Make sure that you have added your bot to your log group/channel."
+            )
+            exit()
+        except Exception as ex:
+            LOGGER(__name__).error(
+                f"Bot has failed to access the log group/channel.\n  Reason : {type(ex).__name__}."
+            )
+            exit()
+
+        a = await self.get_chat_member(config.LOG_GROUP_ID, self.id)
+        if a.status != ChatMemberStatus.ADMINISTRATOR:
+            LOGGER(__name__).error(
+                "Please promote your bot as an admin in your log group/channel."
+            )
+            exit()
+        LOGGER(__name__).info(f"Music Bot Started as {self.name}")
 
     async def stop(self):
         await super().stop()
-        LOGGER(__name__).info("Music Bot Stopped.")
