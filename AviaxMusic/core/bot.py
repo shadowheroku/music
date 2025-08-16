@@ -7,9 +7,8 @@ from pyrogram import Client, errors
 # old
 # from pyrogram.enums import ChatMemberStatus, ParseMode
 
-# new
-from pyrogram.types import ChatMemberStatus
-from pyrogram.enums import ParseMode
+
+from pyrogram.enums import ParseMode ,ChatMemberStatus
 
 
 import config
@@ -62,4 +61,5 @@ class Aviax(Client):
 
     async def stop(self):
         await super().stop()
+
 
