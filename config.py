@@ -16,7 +16,7 @@ BOT_TOKEN = getenv("BOT_TOKEN" , "8463253997:AAEUAKGWXKCnx-6TXllnmZmc60cgptPl0vg
 # Get your mongo url from cloud.mongodb.com
 MONGO_DB_URI = getenv("MONGO_DB_URI", "mongodb+srv://ryumasgod:ryumasgod@cluster0.ojfkovp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 
-DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 60))
+DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 360))
 
 # Chat id of a group for logging bot's activities
 LOG_GROUP_ID = int(getenv("LOG_GROUP_ID", "-1002800777153"))
@@ -123,6 +123,7 @@ if SUPPORT_GROUP:
         raise SystemExit(
             "[ERROR] - Your SUPPORT_GROUP url is wrong. Please ensure that it starts with https://"
         )
+
 
 
 
