@@ -43,9 +43,10 @@ async def download_song(link: str):
     song_url = f"{API_URL}/song/{video_id}?api={API_KEY}"
     try:
         async with aiohttp.ClientSession() as session:
-            # Set a timeout for the API request
+            # Set a timeout for the API request using wait_for (compatible with older Python versions)
             try:
-                async with asyncio.timeout(5):  # 5 second timeout
+                # Create a timeout task
+                async def api_request():
                     async with session.get(song_url) as response:
                         if response.status != 200:
                             raise Exception(f"API request failed with status code {response.status}")
@@ -57,12 +58,17 @@ async def download_song(link: str):
                             download_url = data.get("link")
                             if not download_url:
                                 raise Exception("API response did not provide a download URL.")
+                            return data, download_url
                         elif status == "downloading":
                             # If still downloading, we'll fall back to cookies
                             raise asyncio.TimeoutError("API is still processing, falling back to cookies")
                         else:
                             error_msg = data.get("error") or data.get("message") or f"Unexpected status '{status}'"
                             raise Exception(f"API error: {error_msg}")
+                
+                # Wait for the API request with timeout
+                data, download_url = await asyncio.wait_for(api_request(), timeout=5)
+                
             except asyncio.TimeoutError:
                 # API didn't respond in time, fall back to cookies
                 raise
@@ -136,9 +142,10 @@ async def download_video(link: str):
     video_url = f"{VIDEO_API_URL}/video/{video_id}?api={API_KEY}"
     try:
         async with aiohttp.ClientSession() as session:
-            # Set a timeout for the API request
+            # Set a timeout for the API request using wait_for
             try:
-                async with asyncio.timeout(5):  # 5 second timeout
+                # Create a timeout task
+                async def api_request():
                     async with session.get(video_url) as response:
                         if response.status != 200:
                             raise Exception(f"API request failed with status code {response.status}")
@@ -150,12 +157,17 @@ async def download_video(link: str):
                             download_url = data.get("link")
                             if not download_url:
                                 raise Exception("API response did not provide a download URL.")
+                            return data, download_url
                         elif status == "downloading":
                             # If still downloading, we'll fall back to cookies
                             raise asyncio.TimeoutError("API is still processing, falling back to cookies")
                         else:
                             error_msg = data.get("error") or data.get("message") or f"Unexpected status '{status}'"
                             raise Exception(f"API error: {error_msg}")
+                
+                # Wait for the API request with timeout
+                data, download_url = await asyncio.wait_for(api_request(), timeout=5)
+                
             except asyncio.TimeoutError:
                 # API didn't respond in time, fall back to cookies
                 raise
